@@ -66,6 +66,7 @@ python examples/demo_agent_loop.py       # full pipeline: detect, hint, recover
 
 agentbox report runs/agent-demo.ndjson   # readable summary
 agentbox verify runs/agent-demo.ndjson   # integrity check
+agentbox replay runs/agent-demo.ndjson   # open HTML session replay in browser
 ~~~
 
 ### Example: a stuck agent recovers
@@ -177,6 +178,28 @@ finally:
 Known-compatible models (live validation left to maintainer):
 - `claude-sonnet-5-5` (default)
 
+## Session Replay UI
+
+`agentbox replay` reads any signed `.ndjson` log and generates a self-contained
+dark-mode HTML page — no server, no dependencies beyond Python.
+
+~~~bash
+# Write replay.html next to the log
+agentbox replay runs/my-session.ndjson
+
+# Custom output path
+agentbox replay runs/my-session.ndjson -o review/session.html
+
+# Write and open immediately in the default browser
+agentbox replay runs/my-session.ndjson --open
+~~~
+
+The replay page shows:
+- **Session summary** — sandbox backend, duration, step counts, stop reason
+- **Timeline** — every step with its thought, command, exit code, and collapsible stdout/stderr
+- **Signals** — loop-detector warnings (⚠) and critical stops (🔴) inline with the step that triggered them
+- **Invalid-reply banner** — highlighted if the session stopped due to a bad model reply
+
 ## Detection signals
 
 | Signal | Meaning |
@@ -221,10 +244,10 @@ Anything else falls back to hashing the last lines of stderr. To add a language,
 - [x] Loop detection with hint feedback
 - [x] ReAct-style agent loop
 - [x] Stable error signatures for Python, Node.js and Go
+- [x] Session replay UI (`agentbox replay`)
 - [ ] Validate against a live model ([#5](https://github.com/Prathmesh010190/Agentboxx/issues/5))
 - [ ] Network egress capture
 - [ ] Semantic drift detector
-- [ ] Session replay UI
 - [ ] Threshold calibration on recorded sessions
 
 ## Contributing
